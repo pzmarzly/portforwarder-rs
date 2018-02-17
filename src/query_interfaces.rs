@@ -1,3 +1,8 @@
+// Copyright (c) 2018 Paweł Zmarzły
+// 
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 use get_if_addrs::{ get_if_addrs, IfAddr };
 
 use std::io;

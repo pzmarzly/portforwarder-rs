@@ -1,3 +1,8 @@
+// Copyright (c) 2018 Paweł Zmarzły
+// 
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 use igd::{ self, SearchError, AddAnyPortError, AddPortError, RemovePortError };
 use std::net::{ SocketAddrV4, Ipv4Addr };
 
