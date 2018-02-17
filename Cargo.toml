@@ -1,6 +1,7 @@
 [package]
 name = "portforwarder-rs"
 version = "0.1.0"
+license = "MIT"
 authors = ["Paweł Zmarzły <pawo2500@gmail.com>"]
 
 [dependencies]
