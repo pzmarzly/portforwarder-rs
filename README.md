@@ -4,6 +4,8 @@ Connects to UPnP-enabled gateways and redirects ports. Inspired by [portmapper](
 
 This crate consists of binary `pf` and simple library abstracting over port forwarding and network interface listing.
 
+This crate __HAS NOT BEEN TESTED ON WINDOWS OR MACOS.__
+
 ## Building
 
 Install the utility using command:
