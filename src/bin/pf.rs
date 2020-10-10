@@ -4,9 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 extern crate portforwarder_rs;
-#[macro_use]
-extern crate chan;
-extern crate chan_signal;
+extern crate ctrlc;
 
 use portforwarder_rs::*;
 use std::net::Ipv4Addr;
@@ -87,8 +85,14 @@ fn main() {
         },
     };
 
-    use chan_signal::Signal;
-    let signal = chan_signal::notify(&[Signal::INT, Signal::TERM]);
+    use std::sync::atomic::{AtomicBool, Ordering};
+    use std::sync::Arc;
+    let running = Arc::new(AtomicBool::new(true));
+    let r = running.clone();
+
+    ctrlc::set_handler(move || {
+        r.store(false, Ordering::SeqCst);
+    }).expect("Error setting Ctrl-C handler");
 
     for port in parsed_ports {
         match forwarder.forward_port(port.1, port.2, port.0, "PortForwardRs") {
@@ -98,10 +102,6 @@ fn main() {
     }
 
     println!("Going to sleep... Press Ctrl-C to close program.");
-
-    chan_select! {
-        signal.recv() -> signal => {
-            println!("Received {:?}, shutting down...", signal)
-        }
-    }
+    while running.load(Ordering::SeqCst) {}
+    println!("Shutting down...");
 }
