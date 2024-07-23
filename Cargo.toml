@@ -1,6 +1,6 @@
 [package]
 name = "portforwarder-rs"
-version = "0.1.0"
+version = "0.1.1"
 description = "Forwards ports on UPnP-enabled gateways. Inspired by portmapper (written in Java). Command line and lib."
 authors = ["Paweł Zmarzły <pawo2500@gmail.com>"]
 homepage = "https://github.com/pzmarzly/portforwarder-rs"
