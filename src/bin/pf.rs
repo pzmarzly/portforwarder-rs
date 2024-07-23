@@ -38,36 +38,38 @@ fn main() {
     }
     let mut parsed_ports = Vec::with_capacity(iter.len());
     for port in iter {
-        let port_split = port.split('/').collect::<Vec<_>>();
-        if port_split.len() != 3 {
+      let port_split = port.split('/').collect::<Vec<_>>();
+      match &port_split[..] {
+          [protocol, internal, external] => {
+            let proto = match &protocol.to_lowercase()[..] {
+              "tcp" => port_forwarder::PortMappingProtocol::TCP,
+              "udp" => port_forwarder::PortMappingProtocol::UDP,
+              _ => {
+                  eprintln!("Error! Unrecognized protocol: {} (in {})", protocol, port);
+                  return;
+              },
+          };
+          let internal = match internal.parse::<u16>() {
+              Ok(num) => num,
+              Err(err) => {
+                  eprintln!("Error! Invalid internal port number: {} (in {}) - {}", internal, port, err);
+                  return;
+              },
+          };
+          let external = match external.parse::<u16>() {
+              Ok(num) => num,
+              Err(err) => {
+                  eprintln!("Error! Invalid external port number: {} (in {}) - {}", external, port, err);
+                  return;
+              },
+          };
+          parsed_ports.push((proto, internal, external));
+          },
+          _ => {
             eprintln!("Error! Port not in {{TCP,UDP}}/INTERNAL/EXTERNAL format: {}", port);
             return;
+          },
         }
-        let proto = match &port_split[0].to_lowercase()[..] {
-            "tcp" => port_forwarder::PortMappingProtocol::TCP,
-            "udp" => port_forwarder::PortMappingProtocol::UDP,
-            _ => {
-                eprintln!("Error! Unrecognized protocol: {} (in {})", port_split[0], port);
-                return;
-            },
-        };
-        let internal = port_split[1].parse::<u16>();
-        let internal = match internal {
-            Ok(num) => num,
-            Err(err) => {
-                eprintln!("Error! Invalid internal port number: {} (in {}) - {}", port_split[1], port, err);
-                return;
-            },
-        };
-        let external = port_split[2].parse::<u16>();
-        let external = match external {
-            Ok(num) => num,
-            Err(err) => {
-                eprintln!("Error! Invalid external port number: {} (in {}) - {}", port_split[2], port, err);
-                return;
-            },
-        };
-        parsed_ports.push((proto, internal, external));
     }
 
     let forwarder = match interface {
