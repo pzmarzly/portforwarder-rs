@@ -33,7 +33,7 @@ pub fn create_forwarder(interface_ip: Ipv4Addr) -> Result<Forwarder, SearchError
         ..Default::default()
     })
     .map(|gateway| Forwarder {
-        gateway: gateway,
+        gateway,
         network_interface: interface_ip,
         open_ports: Vec::new(),
     })
@@ -68,10 +68,7 @@ impl Forwarder {
                 name,
             )
             .map(|port| {
-                self.open_ports.push(Port {
-                    proto: proto,
-                    num: port,
-                });
+                self.open_ports.push(Port { proto, num: port });
                 port
             })
     }
@@ -92,7 +89,7 @@ impl Forwarder {
             )
             .map(|()| {
                 self.open_ports.push(Port {
-                    proto: proto,
+                    proto,
                     num: remote_port,
                 });
             })
@@ -104,7 +101,7 @@ impl Forwarder {
     ) -> Result<(), RemovePortError> {
         if let Some(pos) = self.open_ports.iter().position(|el| {
             *el == Port {
-                proto: proto,
+                proto,
                 num: remote_port,
             }
         }) {
