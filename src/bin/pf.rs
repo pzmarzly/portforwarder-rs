@@ -101,13 +101,9 @@ fn main() {
         }
     };
 
-    use std::sync::atomic::{AtomicBool, Ordering};
-    use std::sync::Arc;
-    let running = Arc::new(AtomicBool::new(true));
-    let r = running.clone();
-
+    let (shutdown_tx, shutdown_rx) = std::sync::mpsc::channel();
     ctrlc::set_handler(move || {
-        r.store(false, Ordering::SeqCst);
+        let _ = shutdown_tx.send(());
     })
     .expect("Error setting Ctrl-C handler");
 
@@ -134,6 +130,8 @@ fn main() {
     }
 
     println!("Going to sleep... Press Ctrl-C to close program.");
-    while running.load(Ordering::SeqCst) {}
+    // Block until the Ctrl-C handler signals; `forwarder` is dropped (and
+    // its ports removed) when `main` returns.
+    let _ = shutdown_rx.recv();
     println!("Shutting down...");
 }

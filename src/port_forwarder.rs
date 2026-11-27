@@ -67,9 +67,8 @@ impl Forwarder {
                 0,
                 name,
             )
-            .map(|port| {
+            .inspect(|&port| {
                 self.open_ports.push(Port { proto, num: port });
-                port
             })
     }
     pub fn forward_port(
